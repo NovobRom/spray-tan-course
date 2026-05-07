@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { getPrevNext } from '@/lib/navigation'
-import { SectionNav } from '@/components/SectionNav'
 import { VisitTracker } from '@/components/VisitTracker'
 import { ShopCard } from '@/components/ShopCard'
 
