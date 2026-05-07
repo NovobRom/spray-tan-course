@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: 'Inter', sans-serif;
+  --font-playfair: 'Playfair Display', serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 2rem;
+}
+
+body {
+  background-color: #FAF8F5;
+  color: #2A2724;
+  font-family: var(--font-inter);
+}
+
+/* Anchor targets get scroll offset */
+[id] {
+  scroll-margin-top: 2rem;
+}
