@@ -11,6 +11,7 @@ export function Sidebar() {
   const pathname = usePathname()
   const [visited, setVisited] = useState<Record<string, boolean>>({})
   const [open, setOpen] = useState(false)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
   useEffect(() => {
     const state: Record<string, boolean> = {}
@@ -20,10 +21,14 @@ export function Sidebar() {
     setVisited(state)
   }, [pathname])
 
-  // Close drawer on route change
+  // Close drawer and reset manual expansion on route change
   useEffect(() => {
     setOpen(false)
+    setExpandedId(null)
   }, [pathname])
+
+  const isExpanded = (sectionId: string, sectionHref: string) =>
+    sectionId === expandedId || sectionHref === pathname
 
   const nav = (
     <nav className="flex h-full flex-col">
@@ -47,47 +52,76 @@ export function Sidebar() {
           {sections.map((section) => {
             const isActive = pathname === section.href
             const hasVisited = visited[section.id]
+            const hasSubs = section.subsections.length > 0
+            const expanded = isExpanded(section.id, section.href)
 
             return (
               <li key={section.id}>
-                <Link
-                  href={section.href}
-                  onClick={() => setOpen(false)}
+                <div
                   className={clsx(
-                    'flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                    'flex items-center gap-2 rounded-lg pr-1 text-sm font-medium transition-colors',
                     isActive
                       ? 'bg-beige text-tan'
                       : 'text-muted hover:bg-cream hover:text-ink'
                   )}
                 >
-                  {/* Progress indicator */}
-                  <span
-                    className={clsx(
-                      'flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold',
-                      hasVisited
-                        ? 'bg-tan text-white'
-                        : isActive
-                        ? 'bg-tan/20 text-tan'
-                        : 'bg-border text-muted'
-                    )}
+                  <Link
+                    href={section.href}
+                    onClick={() => {
+                      if (hasSubs) setExpandedId(section.id)
+                      else setOpen(false)
+                    }}
+                    className="flex flex-1 items-center gap-2 px-3 py-2.5"
                   >
-                    {hasVisited ? '✓' : section.number}
-                  </span>
-                  <span className="leading-tight">{section.title}</span>
-                </Link>
+                    {/* Progress indicator */}
+                    <span
+                      className={clsx(
+                        'flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold',
+                        hasVisited
+                          ? 'bg-tan text-white'
+                          : isActive
+                          ? 'bg-tan/20 text-tan'
+                          : 'bg-border text-muted'
+                      )}
+                    >
+                      {hasVisited ? '✓' : section.number}
+                    </span>
+                    <span className="leading-tight">{section.title}</span>
+                  </Link>
 
-                {/* Subsections — show only for active section */}
-                {isActive && section.subsections.length > 0 && (
+                  {hasSubs && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpandedId((cur) => (cur === section.id ? null : section.id))
+                      }
+                      aria-label={expanded ? 'Свернуть подразделы' : 'Раскрыть подразделы'}
+                      aria-expanded={expanded}
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-xs text-muted transition-colors hover:bg-border/50 hover:text-ink"
+                    >
+                      <span
+                        className={clsx(
+                          'inline-block transition-transform',
+                          expanded ? 'rotate-90' : 'rotate-0'
+                        )}
+                      >
+                        ▸
+                      </span>
+                    </button>
+                  )}
+                </div>
+
+                {hasSubs && expanded && (
                   <ul className="ml-10 mt-1 space-y-0.5">
                     {section.subsections.map((sub) => (
                       <li key={sub.id}>
-                        <a
-                          href={`#${sub.id}`}
+                        <Link
+                          href={`${section.href}#${sub.id}`}
                           className="block rounded px-2 py-1 text-xs text-muted transition-colors hover:text-tan"
                           onClick={() => setOpen(false)}
                         >
                           {sub.label}
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
