@@ -50,7 +50,7 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_320px] lg:gap-12">
           <div>
             <h2 className="font-serif text-3xl font-bold text-ink">
-              Добро пожаловать в мир идеального загара! ❤️
+              Добро пожаловать в мир идеального загара! 
             </h2>
             <p className="mt-4 text-lg italic leading-relaxed text-muted">
               Привет! Я рада, что ты здесь, и спасибо за доверие!<br />
